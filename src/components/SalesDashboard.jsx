@@ -935,6 +935,54 @@ export default function SalesDashboard() {
                 </div>
               </div>
 
+              {isMobile ? (
+                <div className="space-y-2.5">
+                  {paged.map((r, idx) => (
+                    <div
+                      key={r.id}
+                      className="rounded-xl p-3.5"
+                      style={{
+                        background: idx % 2 ? (dark ? "rgba(255,255,255,0.02)" : "#FBFCFE") : (dark ? "rgba(255,255,255,0.035)" : "#F7F9FC"),
+                        border: `1px solid ${dark ? "rgba(255,255,255,0.06)" : "rgba(15,23,42,0.06)"}`,
+                      }}
+                    >
+                      <div className="flex items-start justify-between gap-2 mb-2.5">
+                        <div className="min-w-0">
+                          <button className="text-sm font-extrabold truncate block" style={{ color: PALETTE.primary }} onClick={() => setSelectedEmp(r.employee)}>{r.employee}</button>
+                          <div className="flex items-center flex-wrap gap-x-2 gap-y-0.5 mt-0.5 text-[11px] font-semibold" style={{ color: sub }}>
+                            <span>{fmtTime(r.timestamp)}</span>
+                            <span>·</span>
+                            <span className="truncate">{r.branch}</span>
+                            {r.category && (<><span>·</span><span className="truncate">{r.category}</span></>)}
+                          </div>
+                        </div>
+                        <div className="text-left shrink-0">
+                          <div className="text-[10px] font-bold" style={{ color: sub }}>الإجمالي</div>
+                          <div className="text-sm font-extrabold" style={{ color: text }}>{fmt(r.total)}</div>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-3 gap-2 text-[11px] font-bold">
+                        {[
+                          { label: "كاش", value: r.cash, color: PAY_COLORS.cash },
+                          { label: "محفظة", value: r.wallet, color: PAY_COLORS.wallet },
+                          { label: "تحويل", value: r.bank, color: PAY_COLORS.bank },
+                          { label: "أخرى", value: r.other, color: PAY_COLORS.other },
+                          { label: "العهدة", value: r.custody, color: PALETTE.gold },
+                        ].filter((c) => c.value > 0 || c.label === "كاش" || c.label === "العهدة").map((c) => (
+                          <div key={c.label} className="rounded-lg px-2 py-1.5" style={{ background: dark ? "rgba(255,255,255,0.03)" : "#fff", border: `1px solid ${dark ? "rgba(255,255,255,0.05)" : "rgba(15,23,42,0.05)"}` }}>
+                            <div style={{ color: c.color }}>{c.label}</div>
+                            <div style={{ color: text }}>{fmt(c.value)}</div>
+                          </div>
+                        ))}
+                      </div>
+                      {r.notes && <p className="text-[11px] font-semibold mt-2.5 leading-relaxed" style={{ color: sub }}>{r.notes}</p>}
+                    </div>
+                  ))}
+                  {paged.length === 0 && (
+                    <p className="text-center py-8 text-sm font-semibold" style={{ color: sub }}>لا توجد بيانات مطابقة للفلاتر الحالية</p>
+                  )}
+                </div>
+              ) : (
               <div className="overflow-x-auto rounded-xl" style={{ border: `1px solid ${dark ? "rgba(255,255,255,0.05)" : "rgba(15,23,42,0.05)"}` }}>
                 <table className="w-full text-sm min-w-[760px]">
                   <thead>
@@ -974,6 +1022,7 @@ export default function SalesDashboard() {
                   </tbody>
                 </table>
               </div>
+              )}
 
               <div className="flex items-center justify-between mt-4 text-xs font-semibold" style={{ color: sub }}>
                 <span>عرض {paged.length} من أصل {sorted.length} سجل</span>
